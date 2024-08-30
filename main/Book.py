@@ -25,5 +25,10 @@ class Book:
         String_validation.validate_string(ISBN_no, "ISBN_no can not be null")
         String_validation.validate_string(publication_year, "Publication year can not be null")
 
+    def update_stock(self, amount):
+        if self.stock < amount:
+            raise ValueError("Not enough stock to complete the operation")
+        self.stock += amount
+
     def __repr__(self):
         return f"Book(identifier={self.identifier} title={self.title}, author={self.author}), ISBN_no={self.ISBN_no}, publication_year={self.publication_year}, stock={self.stock}, available={self.available})"
