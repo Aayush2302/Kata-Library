@@ -14,6 +14,16 @@ class Library:
             raise ValueError("A Book with this identifier already exists ")
         self.books_catalog[book.identifier] = book
 
+    # Remove Books [Admin,Librarian]
+    def remove_book(self, user: User, identifier):
+        if user.role not in ['Admin', 'Librarian']:
+            raise ValueError('You do not have permission to remove book')
+
+        if identifier not in self.books_catalog:
+            raise ValueError("A Book with this identifier does not exist")
+
+        del self.books_catalog[identifier]
+
 
 if __name__ == "__main__":
     admin = User(username="admin_user", role="Admin")  #admin define with username & role
@@ -21,7 +31,9 @@ if __name__ == "__main__":
     member = User(username="member_user", role="Member")  #member define with username & role
     library = Library()
     book1 = Book("001", "Death Note", "Light Yagami", "100", 2010, 5)
-    # book2 = Book("002", "Death Note", "Light Yagami", "100", 2010, 5)
 
-    library.add_book(admin, book1)  #only admin & librarian can add the books
-    # library.add_book(book2)
+    # only admin & librarian can add the books
+    library.add_book(admin, book1)
+
+    # only admin & librarian can remove the books
+    library.remove_book(admin,"001")
