@@ -5,6 +5,7 @@ from main.User import User
 class Library:
     def __init__(self):
         self.books_catalog = {}  # Dictionary to hold books
+        self.users_catalog = {} # Dictionary to hold Users
 
     def add_book(self, user: User, book: Book):
         if user.role not in ['Admin', 'Librarian']:
@@ -54,6 +55,30 @@ class Library:
             if book.is_available():
                 print(f"Identifier: {book.identifier}, Title:{book.title}, Author:{book.author}, Stock:{book.stock}")
 
+# USER-SECTION
+
+#add User
+
+    def add_user(self, admin_user:User, user:User):
+        #admin_user must be the Admin
+        if admin_user.role != 'Admin':
+            raise ValueError('Only admins have permission to add user')
+        # user already exist
+        if user.username in self.users_catalog:
+            raise ValueError("A User with this username already exists ")
+        # else user added
+        self.users_catalog[user.username] = user
+
+    def remove_user(self, admin_user:User, user:User):
+        if admin_user.role != 'Admin':
+            raise PermissionError('Only admins have permission to remove user')
+
+        if user.username not in self.users_catalog:
+            raise ValueError("A User with this username does not exist")
+
+        del self.users_catalog[user.username]
+
+
 
 if __name__ == "__main__":
     admin = User(username="admin_user", role="Admin")  #admin define with username & role
@@ -62,22 +87,12 @@ if __name__ == "__main__":
     library = Library()
     book1 = Book("001", "Death Note", "Light Yagami", "100", 2010, 3)
 
+    member1 = User("Alex","Member")
+
+    library.add_user(admin, member1)
+    library.remove_user(admin, member1)
     # only admin & librarian can add the books
-    library.add_book(admin, book1)
+    # library.add_book(admin, book1)
 
-    # only admin & librarian can remove the books
-    # library.remove_book(admin, "001")
-
-    library.borrow_book(member, "001")
-    library.borrow_book(member, "001")
-    print("Borrowed Book")
-
-    library.view_available_books()
-
-    library.return_book(member, "001")
-    library.return_book(member, "001")
-    library.return_book(member, "001")
-    library.return_book(member, "001")
-
-    library.view_available_books()
+    # library.view_available_books()
     # library.borrow_book(member, "001")

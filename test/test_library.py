@@ -10,6 +10,7 @@ class TestLibrary(unittest.TestCase):
         self.admin = User('admin_user', "Admin")
         self.librarian = User('librarian', "Librarian")
         self.member = User('member', "Member")
+        self.new_user = User('Aayush', 'Member')
 
     # ADD BOOK
 
@@ -113,6 +114,49 @@ class TestLibrary(unittest.TestCase):
         initial_stock = self.library.books_catalog[identifier].stock
         self.library.return_book(self.member, identifier)
         self.assertEqual(self.library.books_catalog[identifier].stock, initial_stock + 1)
+
+    #USER-TEST-SEction
+
+    def test_only_admin_can_add_user(self):
+        self.new_user = User("Aayush", "Member")
+        try:
+            self.library.add_user(self.member, self.new_user)
+        except ValueError:
+            self.fail("Admin should able to add user")
+
+        # librarian cannot add User
+        with self.assertRaises(ValueError) as context:
+            self.library.add_user(self.librarian, self.new_user)
+        self.assertEqual(str(context.exception), "Only admins have permission to add user")
+
+        # member cannot add User
+        with self.assertRaises(ValueError) as context:
+            self.library.add_user(self.member, self.new_user)
+        self.assertEqual(str(context.exception), "Only admins have permission to add user")
+
+# REMOVE User
+    def test_only_admin_can_remove_user_if_available(self):
+        # self.new_user = User("Allen", "Member")
+        # self.library.add_user(self.admin, self.new_user.username)
+        if self.new_user.username in self.library.users_catalog:
+            self.library.remove_user(self.admin, self.new_user.username)
+            self.assertNotIn(self.new_user.username, self.library.users_catalog)
+        else:
+            self.fail("User is not in the catalog")
+
+
+
+    def test_librarian_cannot_remove_user(self):
+        # Ensure the librarian cannot remove a user
+        with self.assertRaises(ValueError) as context:
+            self.library.remove_user(self.librarian, self.new_user.username)
+        self.assertEqual(str(context.exception), "Only admins have permission to remove users")
+
+    def test_member_cannot_remove_user(self):
+        # Ensure the member cannot remove a user
+        with self.assertRaises(ValueError) as context:
+            self.library.remove_user(self.member, self.new_user.username)
+        self.assertEqual(str(context.exception), "Only admins have permission to remove users")
 
 
 if __name__ == '__main__':
