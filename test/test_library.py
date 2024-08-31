@@ -64,7 +64,6 @@ class TestLibrary(unittest.TestCase):
     # BORROW_BOOK
 
     # only members can borrow the books
-
     def test_member_only_can_borrow_books(self):
         identifier = "005"
         book = Book("005", "Death Note", "Light Yagami", "300", 2010, 5)
@@ -86,7 +85,6 @@ class TestLibrary(unittest.TestCase):
             self.library.borrow_book(self.member, identifier)
 
     #RETURN BOOK
-
     # only members can do it
     def test_member_only_can_return(self):
         identifier = "005"
@@ -115,7 +113,7 @@ class TestLibrary(unittest.TestCase):
         self.library.return_book(self.member, identifier)
         self.assertEqual(self.library.books_catalog[identifier].stock, initial_stock + 1)
 
-    #USER-TEST-SEction
+    #USER-TEST-Section
 
     def test_only_admin_can_add_user(self):
         self.new_user = User("Aayush", "Member")
@@ -134,7 +132,7 @@ class TestLibrary(unittest.TestCase):
             self.library.add_user(self.member, self.new_user)
         self.assertEqual(str(context.exception), "Only admins have permission to add user")
 
-# REMOVE User
+    # REMOVE User
     def test_only_admin_can_remove_user_if_available(self):
         # self.new_user = User("Allen", "Member")
         # self.library.add_user(self.admin, self.new_user.username)
@@ -144,14 +142,14 @@ class TestLibrary(unittest.TestCase):
         else:
             self.fail("User is not in the catalog")
 
-
-
+    # Librarian cannot remove user
     def test_librarian_cannot_remove_user(self):
         # Ensure the librarian cannot remove a user
         with self.assertRaises(ValueError) as context:
             self.library.remove_user(self.librarian, self.new_user.username)
         self.assertEqual(str(context.exception), "Only admins have permission to remove users")
 
+    # Member can not remove user
     def test_member_cannot_remove_user(self):
         # Ensure the member cannot remove a user
         with self.assertRaises(ValueError) as context:

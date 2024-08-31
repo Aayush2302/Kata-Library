@@ -18,7 +18,7 @@ class Book:
         self.stock = stock
 
     def is_available(self):
-        return self.stock > 0
+        return self.stock >= 0
 
     #validation message with validation
     def validate_require_attribute(self, identifier, title, author, ISBN_no, publication_year):
@@ -29,7 +29,7 @@ class Book:
         String_validation.validate_string(publication_year, "Publication year can not be null")
 
     def update_stock(self, amount):
-        if self.stock < amount:
+        if self.stock + amount<0:
             raise ValueError("Not enough stock to complete the operation")
         self.stock += amount
 
