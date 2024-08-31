@@ -84,6 +84,36 @@ class TestLibrary(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.library.borrow_book(self.member, identifier)
 
+    #RETURN BOOK
+
+    # only members can do it
+    def test_member_only_can_return(self):
+        identifier = "005"
+        book = Book("005", "Death Note", "Light Yagami", "300", 2010, 5)
+        self.library.add_book(self.admin, book)
+        initial_stock = self.library.books_catalog[identifier].stock
+        self.library.return_book(self.member, identifier)
+        #check stock increament
+        self.assertEqual(self.library.books_catalog[identifier].stock, initial_stock + 1)
+
+    def test_non_member_cannot_return_book(self):
+        identifier = "003"
+        with self.assertRaises(PermissionError):
+            self.library.return_book(self.librarian, identifier)
+
+    def test_returning_non_existent_book(self):
+        identifier = "999"
+        with self.assertRaises(ValueError):
+            self.library.return_book(self.member, identifier)
+
+    def test_stock_increases_when_book_is_returned(self):
+        identifier = "002"
+        book = Book("002", "Death Note", "Light Yagami", "300", 2010, 5)
+        self.library.add_book(self.admin, book)
+        initial_stock = self.library.books_catalog[identifier].stock
+        self.library.return_book(self.member, identifier)
+        self.assertEqual(self.library.books_catalog[identifier].stock, initial_stock + 1)
+
 
 if __name__ == '__main__':
     unittest.main()

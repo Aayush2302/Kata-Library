@@ -17,6 +17,9 @@ class Book:
         self.publication_year = publication_year
         self.stock = stock
 
+    def is_available(self):
+        return self.stock > 0
+
     #validation message with validation
     def validate_require_attribute(self, identifier, title, author, ISBN_no, publication_year):
         String_validation.validate_string(identifier, "Identifier can not be null")

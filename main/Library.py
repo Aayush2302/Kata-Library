@@ -37,13 +37,30 @@ class Library:
 
         book.update_stock(-1)
 
+    #Retrun_book only Member can do this
+    def return_book(self, user: User, identifier):
+        if user.role != 'Member':
+            raise PermissionError('Only members have permission to return book')
+
+        if identifier not in self.books_catalog:
+            raise ValueError("Book not found in the catalog")
+
+        book = self.books_catalog[identifier]
+        book.update_stock(1)
+
+    # showing all available books
+    def view_available_books(self):
+        for book in self.books_catalog.values():
+            if book.is_available():
+                print(f"Identifier: {book.identifier}, Title:{book.title}, Author:{book.author}, Stock:{book.stock}")
+
 
 if __name__ == "__main__":
     admin = User(username="admin_user", role="Admin")  #admin define with username & role
     librarian = User(username="librarian", role="Librarian")  #librarian define with username & role
     member = User(username="member_user", role="Member")  #member define with username & role
     library = Library()
-    book1 = Book("001", "Death Note", "Light Yagami", "100", 2010, 1)
+    book1 = Book("001", "Death Note", "Light Yagami", "100", 2010, 3)
 
     # only admin & librarian can add the books
     library.add_book(admin, book1)
@@ -52,6 +69,15 @@ if __name__ == "__main__":
     # library.remove_book(admin, "001")
 
     library.borrow_book(member, "001")
+    library.borrow_book(member, "001")
     print("Borrowed Book")
 
-    library.borrow_book(member, "001")
+    library.view_available_books()
+
+    library.return_book(member, "001")
+    library.return_book(member, "001")
+    library.return_book(member, "001")
+    library.return_book(member, "001")
+
+    library.view_available_books()
+    # library.borrow_book(member, "001")
