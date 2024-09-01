@@ -9,79 +9,70 @@ class Library:
 
     def add_book(self, user: User, book: Book):
         if user.role not in ['Admin', 'Librarian']:
-            raise ValueError('You do not have permission to add book')
+            raise PermissionError('You do not have permission to add book')
 
         if book.identifier in self.books_catalog:
-            raise ValueError("A Book with this identifier already exists ")
+            raise ValueError("A book with this identifier already exists.")
         self.books_catalog[book.identifier] = book
 
-    # Remove Books [Admin,Librarian]
     def remove_book(self, user: User, identifier):
         if user.role not in ['Admin', 'Librarian']:
-            raise ValueError('You do not have permission to remove book')
+            raise PermissionError('You do not have permission to remove book')
 
         if identifier not in self.books_catalog:
-            raise ValueError("A Book with this identifier does not exist")
+            raise ValueError("A book with this identifier does not exist.")
 
         del self.books_catalog[identifier]
 
     def borrow_book(self, user: User, identifier):
         if user.role != 'Member':
-            raise ValueError('Only members have permission to borrow a book')
+            raise PermissionError('Only members have permission to borrow a book')
 
         if identifier not in self.books_catalog:
-            raise ValueError("Book not found in the catalog")
+            raise ValueError("Book not found in the catalog.")
 
         book = self.books_catalog[identifier]
         if book.stock <= 0:
-            raise ValueError("Book is not available")
+            raise ValueError("Book is not available.")
 
         book.update_stock(-1)
 
-    #Retrun_book only Member can do this
     def return_book(self, user: User, identifier):
         if user.role != 'Member':
-            raise PermissionError('Only members have permission to return book')
+            raise PermissionError('Only members have permission to return a book')
 
         if identifier not in self.books_catalog:
-            raise ValueError("Book not found in the catalog")
+            raise ValueError("Book not found in the catalog.")
 
         book = self.books_catalog[identifier]
         book.update_stock(1)
 
-    # showing all available books
     def view_available_books(self):
         for book in self.books_catalog.values():
             if book.is_available():
                 print(f"Identifier: {book.identifier}, Title:{book.title}, Author:{book.author}, Stock:{book.stock}")
 
-    # USER-SECTION
-
-    #add User
-
     def add_user(self, admin_user: User, user: User):
-        #admin_user must be the Admin
         if admin_user.role != 'Admin':
-            raise ValueError('Only admins have permission to add user')
-        # user already exist
+            raise PermissionError('Only admins have permission to add user')
+
         if user.username in self.users_catalog:
-            raise ValueError("A User with this username already exists ")
-        # else user added
+            raise ValueError("A user with this username already exists.")
+
         self.users_catalog[user.username] = user
 
-    def remove_user(self, admin_user: User, user: User):
+    def remove_user(self, admin_user: User, username: str):
         if admin_user.role != 'Admin':
-            raise PermissionError('Only admins have permission to remove user')
+            raise PermissionError('Only admins have permission to remove users')
 
-        if user.username not in self.users_catalog:
-            raise ValueError("A User with this username does not exist")
+        if username not in self.users_catalog:
+            raise ValueError("A user with this username does not exist.")
 
-        del self.users_catalog[user.username]
+        del self.users_catalog[username]
 
-    # USER LIST
     def user_list(self):
         for user in self.users_catalog.values():
-            print(f"Username: {user.username},Role: {user.role}")
+            print(f"Username: {user.username}, Role: {user.role}")
 
 
 if __name__ == "__main__":
